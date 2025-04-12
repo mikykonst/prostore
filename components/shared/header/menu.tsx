@@ -1,7 +1,7 @@
 import ModeToggle from "@/components/shared/header/mode-toggle";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { EllipsisVertical, ShoppingCart, UserIcon } from "lucide-react";
+import { EllipsisVertical, ShoppingCart } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -9,6 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import UserButton from "@/components/shared/header/user-button";
 
 type MenuItemsProps = {
   withSignIn?: boolean;
@@ -23,14 +24,7 @@ const MenuItems = ({ withSignIn = false }: MenuItemsProps) => {
           <span className="hidden lg:block">Cart</span>
         </Link>
       </Button>
-      {withSignIn && (
-        <Button asChild>
-          <Link href="/account" className="flex items-center">
-            <UserIcon />
-            <span className="hidden lg:block">Sign in</span>
-          </Link>
-        </Button>
-      )}
+      {withSignIn && <UserButton />}
     </>
   );
 };

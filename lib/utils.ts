@@ -15,3 +15,27 @@ export const formatNumberWithDecimal = (value: number) => {
 
   return decimal ? `${integer}.${decimal.padEnd(2, "0")}` : `${integer}.00`;
 };
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+export function formatErrorMessage(error) {
+  if (error.name === "ZodError") {
+    const errorFields = Object.keys(error.errors).map(
+      (field) => error.errors[field].message,
+    );
+
+    return errorFields.join(",");
+  } else if (
+    error.name === "PrismaClientKnownRequestError" &&
+    error.code === "P2002"
+  ) {
+    const field: string = error.meta?.target?.[0] ?? "Field";
+
+    // Make first letter of field uppercase
+    const formattedField = field.charAt(0).toUpperCase() + field.slice(1);
+
+    return `${formattedField} already exists`;
+  }
+
+  return "An error occurred";
+}

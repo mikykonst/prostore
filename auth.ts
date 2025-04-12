@@ -49,7 +49,13 @@ const config: NextAuthConfig = {
   ],
   callbacks: {
     session({ session, user, trigger, token }) {
-      session.user.id = token?.sub as string;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      session.user.id = token.sub;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      session.user.role = token.role;
+      session.user.name = token.name;
 
       if (trigger === "update") {
         session.user.name = user.name;
@@ -57,6 +63,27 @@ const config: NextAuthConfig = {
 
       return session;
     },
+  },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  async jwt({ token, user }) {
+    if (user) {
+      token.sub = user.id;
+      token.role = user.role;
+
+      if (user.name === "NO_NAME") {
+        token.name = user.email!.split("@")[0];
+      }
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        name: token.name,
+      },
+    });
+
+    return token;
   },
 };
 
